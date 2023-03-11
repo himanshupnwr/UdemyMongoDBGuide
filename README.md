@@ -124,9 +124,9 @@ Text can be as long as you want - the limit is the 16mb restriction for the over
 
 It is also important to understand the difference between int32 (NumberInt), int64 (NumberLong) and a normal number as you can enter it in the shell. The same goes for a normal double and NumberDecimal.
 
-NumberInt creates a int32 value => NumberInt(55)
+NumberInt creates a int32 value => `NumberInt(55)`
 
-NumberLong creates a int64 value => NumberLong(7489729384792)
+NumberLong creates a int64 value => `NumberLong(7489729384792)`
 
 If you just use a number (e.g. insertOne({a: 1}), this will get added as a normal double into the database. The reason for this is that the shell is based on JS which only knows float/ double values and doesn't differ between integers and floats.
 
