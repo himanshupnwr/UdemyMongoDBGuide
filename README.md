@@ -130,6 +130,121 @@ NumberLong creates a int64 value => `NumberLong(7489729384792)`
 
 If you just use a number (e.g. insertOne({a: 1}), this will get added as a normal double into the database. The reason for this is that the shell is based on JS which only knows float/ double values and doesn't differ between integers and floats.
 
-NumberDecimal creates a high-precision double value => NumberDecimal("12.99") => This can be helpful for cases where you need (many) exact decimal places for calculations.
+NumberDecimal creates a high-precision double `value => NumberDecimal("12.99")` => This can be helpful for cases where you need (many) exact decimal places for calculations.
 
 When not working with the shell but a MongoDB driver for your app programming language (e.g. PHP, .NET, Node.js, ...), you can use the driver to create these specific numbers.
+
+Relations in MongoDB
+--------------------
+- One to One Embedded
+- One to Many Using References
+- One to Many Embedded
+- One to Many References
+- Many to Many Embedded
+- Many to Many References
+
+Merging Reference Relations using $lookup
+
+`db.books.aggregate([{$lookup:{from:"authors", localField:"authorsField", foreignField:"_id", as:"creators"}}])`
+
+this is slow as compared to embedded documents so better use embedded relations as compared to this.
+
+Schema Validation
+-------------------
+we can vaidate the incoming data based on the schema of the collection. If the schema is valid then it is accepted otherwise it is rejected.
+
+Validation Level
+strict -> all insert and updates
+moderate -> All insert and updates to correct documents
+
+we can throw and error and block the data update or log a warning and proceed with data update.
+
+We can add the validation when we create a collection
+```
+db.createCollection('posts', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['title', 'text', 'creator', 'comments'],
+      properties: {
+        title: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        text: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        creator: {
+          bsonType: 'objectId',
+          description: 'must be an objectid and is required'
+        },
+        comments: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['text', 'author'],
+            properties: {
+              text: {
+                bsonType: 'string',
+                description: 'must be a string and is required'
+              },
+              author: {
+                bsonType: 'objectId',
+                description: 'must be an objectid and is required'
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+});
+```
+callMod - collectionModifier when collection is alreay created and we have to modify it
+
+```
+db.runCommand({
+  collMod: 'posts',
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['title', 'text', 'creator', 'comments'],
+      properties: {
+        title: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        text: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        creator: {
+          bsonType: 'objectId',
+          description: 'must be an objectid and is required'
+        },
+        comments: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['text', 'author'],
+            properties: {
+              text: {
+                bsonType: 'string',
+                description: 'must be a string and is required'
+              },
+              author: {
+                bsonType: 'objectId',
+                description: 'must be an objectid and is required'
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationAction: 'warn'
+});
+```
