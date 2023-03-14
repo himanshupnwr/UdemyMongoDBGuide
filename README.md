@@ -28,6 +28,8 @@ Find documents
 
 - `db.passengers.find({},{name:1}).pretty()` - gives us all documents with only name key and value for all top 20 documents as per cursor rule
 
+type it for more
+
 Query operators
 --------------------
 $or - `{$or: [{shared : "true"},{tags : "programming"}]}`
@@ -338,3 +340,19 @@ cd <navigate to json file which has the data>
 
 `mongoimport file.json -d movieData -c movies --jsonArray --drop`
 
+Read Operations
+---------------
+
+$lte - lower than or equal to
+$eq
+$neq
+$in - takes an array and check for values in the object `db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
+$nin is not inside condition
+not equals to -> {$not:{$eq:60}}
+
+.count() - to get the count of the documents that passed the operator conditions
+
+$or -> `{$or:[{"rating.average":{$lt:5}, {"rating.average":{$gt:9.3}}}]}`
+$nor is the opposite of $or operator
+
+Element Operators
