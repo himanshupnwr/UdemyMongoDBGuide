@@ -349,10 +349,34 @@ $neq
 $in - takes an array and check for values in the object `db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
 $nin is not inside condition
 not equals to -> {$not:{$eq:60}}
-
+$gte -> greater than equal to
 .count() - to get the count of the documents that passed the operator conditions
 
 $or -> `{$or:[{"rating.average":{$lt:5}, {"rating.average":{$gt:9.3}}}]}`
 $nor is the opposite of $or operator
 
 Element Operators
+------------------
+
+$exists tells if the object is inside the document `db.users.find({age:{$exists:true, $gt:30}}).pretty()`
+
+$type -> check for the type given in the condition - `db.Users.find({phone:{$type:"double"}}).pretty()`
+
+`db.Users.find({phone:{$type:["double","string"]}}).pretty()` - checking multiple types
+
+$regex -> finding text snippets using regex - but they are not very performant
+`db.movies.find({summary:{$regex:/musical/}}).pretty()` - returns all documents where in the summary this word can be found
+
+$expr -> when we want to compare two objects inside a document and use this comparison to find other similar documents
+`db.sales.find({$expr: {$gt: ["$volume", "$target"]}}).pretty()`
+
+$cond, $subtract, $if, $else operator
+`db.sales.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]}, then: {$subtract: ["$volume", 30]}, else:"$volume"}}, "$target"]}}).pretty()`
+
+$size - check the size of elements inside the array - `db.users.find({hobbies:{$size:3}}).pretty()`
+
+$all - `db.moviestarts.find({genre: {$all: ["action", "thriller"]}}).pretty()`
+
+$elemMatch - if we want the conditions to work in the same element
+`db.users.find({hobbies: {$elemMatch: {title:"sports", frequency: {$gte:3}}}}).pretty()`
+
