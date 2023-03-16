@@ -28,7 +28,14 @@ Find documents
 
 - `db.passengers.find({},{name:1}).pretty()` - gives us all documents with only name key and value for all top 20 documents as per cursor rule
 
+.find gives us a cursor which is by default set to 20 documents
+
+`find().hasNext()` -> to check if cursor has any next element to show
+`.find().next` -> gives me the next document in line
+
 type it for more
+
+`dataCursor.forEach(doc => {printjson(doc)}` -> uses javascript foreach to display all documents in the datacursor document
 
 Query operators
 --------------------
@@ -380,3 +387,30 @@ $all - `db.moviestarts.find({genre: {$all: ["action", "thriller"]}}).pretty()`
 $elemMatch - if we want the conditions to work in the same element
 `db.users.find({hobbies: {$elemMatch: {title:"sports", frequency: {$gte:3}}}}).pretty()`
 
+Sorting
+----------
+
+we use the number 1 and -1 for passing the type of sorting we need. 1 means ascending and -1 meand desending
+
+`db.movies.find().sort({"rating.average": -1}).pretty()` minus 1 for descending
+
+`db.movies.find().sort({"rating.average": 1, runtime: 1}).pretty()` - sorting by multiple criteria
+
+`db.movies.find().sort({"rating.average": 1, runtime: 1}).skip(10).pretty()` - results with skipped 10 documents
+
+limits - `db.movies.find().sort({"rating.average": 1, runtime: 1}).skip(10).limit(10).pretty()`
+
+Projections
+-------------
+
+we can use projection to shape the structure of our results. if we want to include inly few elements of out document
+
+`db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1, _id: 0}).pretty()`
+
+if we want to exculde id field as it is not excluded by default we have to pass 0 for it
+
+projections also works on the embedded data
+
+`db.movies.find({}. {name:1, genres: 1, runtime: 1, "rating.average": 1, "schedule.time": 1, _id: 0}).pretty()`
+
+In Arrays - 
