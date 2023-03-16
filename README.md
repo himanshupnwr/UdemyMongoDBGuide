@@ -413,4 +413,13 @@ projections also works on the embedded data
 
 `db.movies.find({}. {name:1, genres: 1, runtime: 1, "rating.average": 1, "schedule.time": 1, _id: 0}).pretty()`
 
-In Arrays - 
+In Arrays - `db.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty()` - give only one item from array genres drama
+
+`db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}}).pretty()`
+
+$slice -> `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice:2}, name: 1}).pretty()`
+slice is related to arrays. only the first 2 elements returned for the array because we used slice 2
+
+`db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice: [1, 2]}, name: 1}).pretty()`
+skip the first item and give next 2 items
+
