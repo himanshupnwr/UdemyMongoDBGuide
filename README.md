@@ -423,3 +423,18 @@ slice is related to arrays. only the first 2 elements returned for the array bec
 `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice: [1, 2]}, name: 1}).pretty()`
 skip the first item and give next 2 items
 
+Assignment 4
+-------------
+find all movies with exactly two genres
+- `{genre: {$size: 2}}`
+
+find all movies that aired in 2018
+- `{"meta.aired":2018}`
+
+find all movies with ratings greater than 8 and lower than 10
+- `{ratings: {$elemMatch: {$gt:8, $lt: 10}}}`
+
+Update Operations
+------------------
+
+document updating operator - update, updating fields, updating arrays 
