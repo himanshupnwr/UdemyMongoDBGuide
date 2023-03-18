@@ -1,22 +1,34 @@
 # UdemyMongoDBGuide
 
-connection string to connect using mongo shell -> `"mongodb://localhost:27017"`
+connection string to connect using mongo shell 
 
-connect to remote host -> `"mongodb://mongodb0.example.com:28015"` or `mongosh --host mongodb0.example.com --port 28015`
+`"mongodb://localhost:27017"`
 
-using authentication ->` mongosh "mongodb://mongodb0.example.com:28015" --username alice --authenticationDatabase admin`
+connect to remote host
+
+`"mongodb://mongodb0.example.com:28015"` or `mongosh --host mongodb0.example.com --port 28015`
+
+using authentication
+
+` mongosh "mongodb://mongodb0.example.com:28015" --username alice --authenticationDatabase admin`
 
 type `exit()` to disconnect
 
 Commands
 -------------------
-basic commands -> `db.help()` `db.version()` `db.stats()` `show dbs` `use <dbname>` `show collections`
+basic commands
 
-create collection -> `create collection - db.createCollection("<dbname>")`
+`db.help()` `db.version()` `db.stats()` `show dbs` `use <dbname>` `show collections`
+
+create collection
+
+`create collection - db.createCollection("<dbname>")`
 
 Inserting commands
 --------------------
-insertOne -> `db.<dbname>.insertOne("jsonstringhere")` insertMany -> `db.<dbname>.insertMany("[jsonstringhere, josnstringhere]")`
+insertOne
+
+`db.<dbname>.insertOne("jsonstringhere")` insertMany -> `db.<dbname>.insertMany("[jsonstringhere, josnstringhere]")`
 
 Find documents
 -----------------
@@ -31,6 +43,7 @@ Find documents
 .find gives us a cursor which is by default set to 20 documents
 
 `find().hasNext()` -> to check if cursor has any next element to show
+
 `.find().next` -> gives me the next document in line
 
 type it for more
@@ -61,7 +74,8 @@ and many other operators
 
 Helper methods
 ---------------------
-sort() - `.sort({comments:1})`  limit() - `.limit(2) - limit to 2 results`  skip() - `.skip(2) - skip first 2 results`
+sort()
+`.sort({comments:1})`  limit() - `.limit(2) - limit to 2 results`  skip() - `.skip(2) - skip first 2 results`
 
 update documents
 -----------------
@@ -69,17 +83,21 @@ update documents
 
 update operators
 ----------------
-$set - `db.posts.updateOne({postId:2618},{$set: {shared: true}})`
+$set
+`db.posts.updateOne({postId:2618},{$set: {shared: true}})`
 
-$set - `db.posts.updateMany({},{$set: {shared: true}})` - to set this for all documents
+$set
+`db.posts.updateMany({},{$set: {shared: true}})` - to set this for all documents
 
 $rename
 
-$unset - `db.posts.updateOne({tags[]}, {$unset:{tags:1}})`
+$unset
+`db.posts.updateOne({tags[]}, {$unset:{tags:1}})`
 
 $currentDate
 
-$inc - increment - `db.posts.updateOne({postId:8541},{$inc:{comments:1}}`
+$inc - increment
+`db.posts.updateOne({postId:8541},{$inc:{comments:1}}`
 
 $addToSet
 
@@ -89,7 +107,9 @@ ReplaceOne()
 
 Delete documents
 --------------------
-`deleteOne({departureAirport: "TXL"})` `deleteOne({_id: "testid"})` `deleteMany({}}` - to delete all `deleteMany({filtercondition}}`
+`deleteOne({departureAirport: "TXL"})` 
+
+`deleteOne({_id: "testid"})` `deleteMany({}}` - to delete all `deleteMany({filtercondition}}`
 
 `db.dropDatabase()` to delete database `db.myCollection.Drop()` to delete a single collection
 
@@ -133,9 +153,11 @@ Text can be as long as you want - the limit is the 16mb restriction for the over
 
 It is also important to understand the difference between int32 (NumberInt), int64 (NumberLong) and a normal number as you can enter it in the shell. The same goes for a normal double and NumberDecimal.
 
-NumberInt creates a int32 value => `NumberInt(55)`
+NumberInt creates a int32 value
+`NumberInt(55)`
 
-NumberLong creates a int64 value => `NumberLong(7489729384792)`
+NumberLong creates a int64 value
+`NumberLong(7489729384792)`
 
 If you just use a number (e.g. insertOne({a: 1}), this will get added as a normal double into the database. The reason for this is that the shell is based on JS which only knows float/ double values and doesn't differ between integers and floats.
 
@@ -163,7 +185,9 @@ Schema Validation
 we can vaidate the incoming data based on the schema of the collection. If the schema is valid then it is accepted otherwise it is rejected.
 
 Validation Level
+
 strict -> all insert and updates
+
 moderate -> All insert and updates to correct documents
 
 we can throw and error and block the data update or log a warning and proceed with data update.
@@ -260,19 +284,24 @@ db.runCommand({
 MongoD
 -----------
 Copy the path to Environment variables path to run mongod command
+
 C:\Program Files\MongoDB\Server\6.0\bin
 
 After this open the command prompt and type `mongod --help`
 
 To set the path for file directory in which we want to have the mongo databses 
-Example -> `mongod --dbpath C:/Mongodatabase/development`
+
+`mongod --dbpath C:/Mongodatabase/development`
 
 To set the path for file directory in which we want to have the mongo logs
-Example -> `mongod --dbpath C:/Mongodatabase/logs/log`
+
+`mongod --dbpath C:/Mongodatabase/logs/log`
 
 To shut down Mongo DB Server from command prompt use
--> `db.shutdownServer()`
--> `net stop MongoDB`
+
+`db.shutdownServer()`
+
+`net stop MongoDB`
 
 We can modify the mongodb config file in bin folder
 
@@ -285,6 +314,7 @@ systemLog:
 ```
 
 to use an exisiting mongodb config file for new mongodb instance on a system use, copy the config file in bin
+
 -> `mongod -f <bin path to config.cfg>`
 
 Create Operations
@@ -325,7 +355,7 @@ Now the question is why do we write it in the journal and not directly into the 
 
 Still that also takes longer than not using the journal and the default is that the journal is not getting used with j undefined and that does simply mean that the storage engine will eventually handle this write and also write it to the journal but you don't have that information yet, you don't know if it has been stored in the journal yet, if the write succeeded yet, if the write has been done on the disk, you don't know any of that, you just know that the server is aware of your write. So if the server should go down in that exact moment, it might indeed not have done the write because it hasn't been added to the journal yet, it hasn't been saved to the database files yet.
 
--> `{w:1, j:true}`
+`{w:1, j:true}`
 `db.Patient.insertOne({name:"Alia", age:45}, {writeConcern:{w:1, j:true}})`
 
 Now you can set a different option and set J to true, what you're now saying is hey please only report a success for this write to me after it has been both acknowledged and been saved to the journal, so now I have a greater security that this will happen and succeed even if the server should face issues right now.
@@ -343,6 +373,7 @@ So this is the write concern and how you can control this, obviously enabling th
 Importing Data
 ---------------
 cd <navigate to json file which has the data>
+
 --drop -> if collection exists then drop the existing one and add the new one
 
 `mongoimport file.json -d movieData -c movies --jsonArray --drop`
@@ -351,33 +382,50 @@ Read Operations
 ---------------
 
 $lte - lower than or equal to
+
 $eq
+
 $neq
-$in - takes an array and check for values in the object `db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
+
+$in - takes an array and check for values in the object
+
+`db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
+
 $nin is not inside condition
+
 not equals to -> {$not:{$eq:60}}
+
 $gte -> greater than equal to
+
 .count() - to get the count of the documents that passed the operator conditions
 
 $or -> `{$or:[{"rating.average":{$lt:5}, {"rating.average":{$gt:9.3}}}]}`
+
 $nor is the opposite of $or operator
 
 Element Operators
 ------------------
 
-$exists tells if the object is inside the document `db.users.find({age:{$exists:true, $gt:30}}).pretty()`
+$exists tells if the object is inside the document 
 
-$type -> check for the type given in the condition - `db.Users.find({phone:{$type:"double"}}).pretty()`
+`db.users.find({age:{$exists:true, $gt:30}}).pretty()`
+
+$type -> check for the type given in the condition
+
+`db.Users.find({phone:{$type:"double"}}).pretty()`
 
 `db.Users.find({phone:{$type:["double","string"]}}).pretty()` - checking multiple types
 
 $regex -> finding text snippets using regex - but they are not very performant
+
 `db.movies.find({summary:{$regex:/musical/}}).pretty()` - returns all documents where in the summary this word can be found
 
 $expr -> when we want to compare two objects inside a document and use this comparison to find other similar documents
+
 `db.sales.find({$expr: {$gt: ["$volume", "$target"]}}).pretty()`
 
 $cond, $subtract, $if, $else operator
+
 `db.sales.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]}, then: {$subtract: ["$volume", 30]}, else:"$volume"}}, "$target"]}}).pretty()`
 
 $size - check the size of elements inside the array - `db.users.find({hobbies:{$size:3}}).pretty()`
@@ -385,6 +433,7 @@ $size - check the size of elements inside the array - `db.users.find({hobbies:{$
 $all - `db.moviestarts.find({genre: {$all: ["action", "thriller"]}}).pretty()`
 
 $elemMatch - if we want the conditions to work in the same element
+
 `db.users.find({hobbies: {$elemMatch: {title:"sports", frequency: {$gte:3}}}}).pretty()`
 
 Sorting
@@ -413,28 +462,70 @@ projections also works on the embedded data
 
 `db.movies.find({}. {name:1, genres: 1, runtime: 1, "rating.average": 1, "schedule.time": 1, _id: 0}).pretty()`
 
-In Arrays - `db.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty()` - give only one item from array genres drama
+In Arrays
+
+`db.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty()` - give only one item from array genres drama
 
 `db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}}).pretty()`
 
-$slice -> `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice:2}, name: 1}).pretty()`
+$slice
+
+`db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice:2}, name: 1}).pretty()`
+
 slice is related to arrays. only the first 2 elements returned for the array because we used slice 2
 
 `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice: [1, 2]}, name: 1}).pretty()`
+
 skip the first item and give next 2 items
 
 Assignment 4
 -------------
 find all movies with exactly two genres
+
 - `{genre: {$size: 2}}`
 
 find all movies that aired in 2018
+
 - `{"meta.aired":2018}`
 
 find all movies with ratings greater than 8 and lower than 10
+
 - `{ratings: {$elemMatch: {$gt:8, $lt: 10}}}`
 
 Update Operations
 ------------------
 
 document updating operator - update, updating fields, updating arrays 
+
+update query based on the unique id of the document
+
+`db.users.updateOne({_id: ObjectId("6415be06a17bfffcea22594f")}, {$set: {hobbies: [{title: "Sports", frequency: 5}, {title: "Cooking", frequency: 3}, {title: "Hiking", frequency: 7}]}})`
+
+override the exisiting fields if there is a match and there is any change in data, if data does not exist then add it.
+
+`db.users.updateMany({"hobbies.title": "Sports"}, {$set: {isSporty: true}})`
+
+Updating multiple fields with $set
+
+`db.users.updateOne({_id: ObjectId("6415be06a17bfffcea225952")}, {$set: {age:40, phone: 1234567890}})`
+
+Incrementing and decrementing values
+
+`db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}})`
+
+Set along with update
+
+`db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}, $set: {isSporty: false}})`
+
+Use $min, $max, $mul
+
+$min only changes the value if the existing value is lower than the existing value
+
+`db.users.updateOne({name: "Chris"}, {$min: {age: 35}})`
+
+$max will only update the value if the updated value is higher than the existing value
+
+$mul will multiply the value matched with the one given in the query
+
+`db.users.updateOne({name: "Chris"}, {$mul: {age: 1.1}})`
+
