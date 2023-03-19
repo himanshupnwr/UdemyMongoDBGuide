@@ -366,7 +366,7 @@ Now there also is a third option not directly related to the journal but it's a 
 
 So if you have some issues with the network connection or anything like that, you might simply timeout here, obviously setting this too low might timeout even though it would have perfectly succeeded normally and therefore you should know what you do when you set this timeout value because if you set it to a very low number, you might fail a lot even though there is no actual problem, just some small latency.
 
-So this is the write concern and how you can control this, obviously enabling the journal confirmation means that your writes will take longer because you don't just tell the server about them but you also need to wait for the server to store that write operation in the journal but you get higher security that the write also succeeded. Again this is a decision you have to make depending on your application needs, what you need.
+So this is the write concern and how you can control this, obviously enabling the journal confirmation means that your writes will take longer because you dont just tell the server about them but you also need to wait for the server to store that write operation in the journal but you get higher security that the write also succeeded. Again this is a decision you have to make depending on your application needs, what you need.
 
 -> Mongo DB CRUD Operation are atomic on the document level(inluding embedded documents)
 
@@ -549,12 +549,65 @@ Update Assignment
 -------------------
 
 upsert two new documents in a collection
-- db.teams.updateOne({}, {$set: {title: "Football, requireteam: true}, {upsert: true})
-- db.teams.updateOne({title: "Running"}, {$set: {requireteam: false}}, {upsert: true})
+  
+- `db.teams.updateOne({}, {$set: {title: "Football, requireteam: true}, {upsert: true})`
+  
+- `db.teams.updateOne({title: "Running"}, {$set: {requireteam: false}}, {upsert: true})`
 
 update all documents that requires a team by adding a field with minimum amount of players required
-- db.teams.updateOne({requireteam: true}, {$set: {minimumplayers: 11}})
+
+- `db.teams.updateOne({requireteam: true}, {$set: {minimumplayers: 11}})`
 
 update all documents that requires a team by increasing the number of required players by 10
-- db.teams.updateOne({requireteam: true}, {$inc: {minimumplayers: 10}})
+  
+- `db.teams.updateOne({requireteam: true}, {$inc: {minimumplayers: 10}})`
 
+Update Arrays
+---------------
+
+find and elemMatch in arrays
+  
+`db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).pretty()`
+  
+`db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).count()`
+  
+`db.users.updateMany({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}, 
+ {$set: {"hobbies.$.highFrequency": true}})`
+  
+$ sign placeholder is a lot helper when we want to update a specific element in an array
+  
+`db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
+  
+$[] means for each element inside the hobbies array as without [] ot updates only the first element
+  
+`db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
+  
+using array filters
+
+``db.users.updateMany({totalAge: {$gt: 30}}, {$set: {"hobbies.$[el].goodFrequency": true}},
+  {arrayFilters: [{"el.frequency": {$gt: 2}}]})``
+  
+$push - adding elements to arrays
+  
+`db.users.updateOne({name: "Maria"}, {$push: {hobbies: {title: "sports", frequency: 2}}})`
+  
+`db.users.updateOne({name: "Maria"}, {$push: {hobbies: 
+  {$each: [{title: "Good Wine", frequency: 1}, {title: "Hockey", frequency: 2}], 
+  $sort: {frequency: -1}}}})`
+  
+$pull - used to remove data from array
+  
+`db.users.updteOne({name: "Maria"}, {$pull: {hobbies: {title: "Hiking"}}})`
+  
+$addToSet - used to add the data to the existing array set
+  
+`db.users.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})`
+  
+Delete Documents
+-------------------
+  
+`db.users.deleteOne({name: "Chris"})`
+  
+`db.users.deleteMany({age: {$gt: 30}, isSporty: true})`
+  
+`db.users.deleteMany({age: {$exists: false}, isSporty: true})`
