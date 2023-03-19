@@ -529,3 +529,32 @@ $mul will multiply the value matched with the one given in the query
 
 `db.users.updateOne({name: "Chris"}, {$mul: {age: 1.1}})`
 
+drop a field from a document or documents
+
+`db.users.updateMany({isSporty:true}, {$set: {phone:null}})`
+
+$unset allows us to unset or you can say drop a field from a collection document
+
+`db.users.updateMany({isSporty:true}, {$unset: {phone:""}})`
+
+$rename - renaming fields operator
+
+`db.users.updateMany({}, {$rename: {age: "totalAge"}})`
+
+upsert - command to insert if update does not match
+
+`db.users.updateOne({name: "Maria"}, {$set: {age: 39, hobbies: [{title: "Good Food", frequency: 5}], isSporty: true}}, {upsert: true})`
+
+Update Assignment
+-------------------
+
+upsert two new documents in a collection
+- db.teams.updateOne({}, {$set: {title: "Football, requireteam: true}, {upsert: true})
+- db.teams.updateOne({title: "Running"}, {$set: {requireteam: false}}, {upsert: true})
+
+update all documents that requires a team by adding a field with minimum amount of players required
+- db.teams.updateOne({requireteam: true}, {$set: {minimumplayers: 11}})
+
+update all documents that requires a team by increasing the number of required players by 10
+- db.teams.updateOne({requireteam: true}, {$inc: {minimumplayers: 10}})
+
