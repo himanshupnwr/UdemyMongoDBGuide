@@ -378,6 +378,10 @@ cd <navigate to json file which has the data>
 
 `mongoimport file.json -d movieData -c movies --jsonArray --drop`
 
+cd path to mongoimport.exe, copy json file to same folder as mongoimport.exe
+
+`.\mongoimport.exe persons.json -d Indexes -c persons --jsonArray`
+
 Read Operations
 ---------------
 
@@ -611,3 +615,9 @@ Delete Documents
 `db.users.deleteMany({age: {$gt: 30}, isSporty: true})`
   
 `db.users.deleteMany({age: {$exists: false}, isSporty: true})`
+
+Indexes
+---------
+
+indexes are used to make the search within a collection faster. The conventional method to search is that when we find a document in a collection we search the complete collection. But if we create indexes then in the sorted index we can search for the information much more efficiently. But we also cannot create indexes based each item of the document because then we will have to update the indexes created on all insert and updates.
+
