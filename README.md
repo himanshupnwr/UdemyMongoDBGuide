@@ -34,7 +34,9 @@ Find documents
 -----------------
 - `db.dbname.find().pretty()` - `db.dbname.find().toArray()`
 
-- `findone - db.getCollections('posts').findOne({postId:3015})` - `find - db.getCollections('posts').find({postId:3015})`
+- `findone - db.getCollections('posts').findOne({postId:3015})` 
+
+- `find - db.getCollections('posts').find({postId:3015})`
 
 - `find - db.getCollections('posts').find({"author.name":"emily watson"})` - nested object query use . symbol
 
@@ -42,40 +44,41 @@ Find documents
 
 .find gives us a cursor which is by default set to 20 documents
 
-`find().hasNext()` -> to check if cursor has any next element to show
+- `find().hasNext()` -> to check if cursor has any next element to show
 
-`.find().next` -> gives me the next document in line
+- `.find().next` -> gives me the next document in line
 
-type it for more
+type `it` for more
 
 `dataCursor.forEach(doc => {printjson(doc)}` -> uses javascript foreach to display all documents in the datacursor document
 
 Query operators
 --------------------
-$or - `{$or: [{shared : "true"},{tags : "programming"}]}`
+- $or - `{$or: [{shared : "true"},{tags : "programming"}]}`
 
-$eq - 
+- $eq - 
 
-$lt less than - `{comments : {$lt:5}}`
+- $lt less than - `{comments : {$lt:5}}`
 
-$and - `{$and: [{comments : {$gt:0}},{comments : {$lt:5}}]}`
+- $and - `{$and: [{comments : {$gt:0}},{comments : {$lt:5}}]}`
 
-$ne
+- $ne
 
-$gt : greater than - `{comments : {$gt:0}}`
+- $gt : greater than - `{comments : {$gt:0}}`
 
-$in - `{tags: {$in : ["programming", "coding"]}}`
+- $in - `{tags: {$in : ["programming", "coding"]}}`
 
-$nin
+- $nin
 
-$regex
+- $regex
 
 and many other operators
 
 Helper methods
 ---------------------
 sort()
-`.sort({comments:1})`  limit() - `.limit(2) - limit to 2 results`  skip() - `.skip(2) - skip first 2 results`
+
+- `.sort({comments:1})`  limit() - `.limit(2) - limit to 2 results`  skip() - `.skip(2) - skip first 2 results`
 
 update documents
 -----------------
@@ -83,45 +86,52 @@ update documents
 
 update operators
 ----------------
-$set
-`db.posts.updateOne({postId:2618},{$set: {shared: true}})`
+$set 
+
+- `db.posts.updateOne({postId:2618},{$set: {shared: true}})`
 
 $set
-`db.posts.updateMany({},{$set: {shared: true}})` - to set this for all documents
+
+- `db.posts.updateMany({},{$set: {shared: true}})` - to set this for all documents
 
 $rename
 
 $unset
-`db.posts.updateOne({tags[]}, {$unset:{tags:1}})`
+
+- `db.posts.updateOne({tags[]}, {$unset:{tags:1}})`
 
 $currentDate
 
 $inc - increment
-`db.posts.updateOne({postId:8541},{$inc:{comments:1}}`
+
+- `db.posts.updateOne({postId:8541},{$inc:{comments:1}}`
 
 $addToSet
 
 ReplaceOne()
 ------------
-`db.flightData.replaceOne({jsondocument})` //replace the document based on the matching id
+
+- `db.flightData.replaceOne({jsondocument})` //replace the document based on the matching id
 
 Delete documents
 --------------------
-`deleteOne({departureAirport: "TXL"})` 
+- `deleteOne({departureAirport: "TXL"})` 
 
-`deleteOne({_id: "testid"})` `deleteMany({}}` - to delete all `deleteMany({filtercondition}}`
+- `deleteOne({_id: "testid"})` `deleteMany({}}` - to delete all `deleteMany({filtercondition}}`
 
-`db.dropDatabase()` to delete database `db.myCollection.Drop()` to delete a single collection
+- `db.dropDatabase()` to delete database `db.myCollection.Drop()` to delete a single collection
 
 Aggregation
 -------------
-`[
+```
+[
   {
     $group: {
       _id: "$author.name",
     },
   },
-]`
+]
+```
 
 this will parse the existing collection documents and based on this condition creates new documents
 
@@ -154,10 +164,12 @@ Text can be as long as you want - the limit is the 16mb restriction for the over
 It is also important to understand the difference between int32 (NumberInt), int64 (NumberLong) and a normal number as you can enter it in the shell. The same goes for a normal double and NumberDecimal.
 
 NumberInt creates a int32 value
-`NumberInt(55)`
+
+- `NumberInt(55)`
 
 NumberLong creates a int64 value
-`NumberLong(7489729384792)`
+
+- `NumberLong(7489729384792)`
 
 If you just use a number (e.g. insertOne({a: 1}), this will get added as a normal double into the database. The reason for this is that the shell is based on JS which only knows float/ double values and doesn't differ between integers and floats.
 
@@ -193,6 +205,7 @@ moderate -> All insert and updates to correct documents
 we can throw and error and block the data update or log a warning and proceed with data update.
 
 We can add the validation when we create a collection
+
 ```
 db.createCollection('posts', {
   validator: {
@@ -385,15 +398,15 @@ cd path to mongoimport.exe, copy json file to same folder as mongoimport.exe
 Read Operations
 ---------------
 
-$lte - lower than or equal to
+- $lte - lower than or equal to
 
-$eq
+- $eq
 
-$neq
+- $neq
 
-$in - takes an array and check for values in the object
+- $in - takes an array and check for values in the object
 
-`db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
+- `db.movies.find({runtime:{$in:[30,42]}}).pretty()` runtime either 30 or 42
 
 $nin is not inside condition
 
@@ -412,44 +425,44 @@ Element Operators
 
 $exists tells if the object is inside the document 
 
-`db.users.find({age:{$exists:true, $gt:30}}).pretty()`
+- `db.users.find({age:{$exists:true, $gt:30}}).pretty()`
 
 $type -> check for the type given in the condition
 
-`db.Users.find({phone:{$type:"double"}}).pretty()`
+- `db.Users.find({phone:{$type:"double"}}).pretty()`
 
-`db.Users.find({phone:{$type:["double","string"]}}).pretty()` - checking multiple types
+- `db.Users.find({phone:{$type:["double","string"]}}).pretty()` - checking multiple types
 
 $regex -> finding text snippets using regex - but they are not very performant
 
-`db.movies.find({summary:{$regex:/musical/}}).pretty()` - returns all documents where in the summary this word can be found
+- `db.movies.find({summary:{$regex:/musical/}}).pretty()` - returns all documents where in the summary this word can be found
 
 $expr -> when we want to compare two objects inside a document and use this comparison to find other similar documents
 
-`db.sales.find({$expr: {$gt: ["$volume", "$target"]}}).pretty()`
+- `db.sales.find({$expr: {$gt: ["$volume", "$target"]}}).pretty()`
 
 $cond, $subtract, $if, $else operator
 
-`db.sales.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]}, then: {$subtract: ["$volume", 30]}, else:"$volume"}}, "$target"]}}).pretty()`
+- `db.sales.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]}, then: {$subtract: ["$volume", 30]}, else:"$volume"}}, "$target"]}}).pretty()`
 
 $size - check the size of elements inside the array - `db.users.find({hobbies:{$size:3}}).pretty()`
 
-$all - `db.moviestarts.find({genre: {$all: ["action", "thriller"]}}).pretty()`
+- $all - `db.moviestarts.find({genre: {$all: ["action", "thriller"]}}).pretty()`
 
 $elemMatch - if we want the conditions to work in the same element
 
-`db.users.find({hobbies: {$elemMatch: {title:"sports", frequency: {$gte:3}}}}).pretty()`
+- `db.users.find({hobbies: {$elemMatch: {title:"sports", frequency: {$gte:3}}}}).pretty()`
 
 Sorting
 ----------
 
 we use the number 1 and -1 for passing the type of sorting we need. 1 means ascending and -1 meand desending
 
-`db.movies.find().sort({"rating.average": -1}).pretty()` minus 1 for descending
+- `db.movies.find().sort({"rating.average": -1}).pretty()` minus 1 for descending
 
-`db.movies.find().sort({"rating.average": 1, runtime: 1}).pretty()` - sorting by multiple criteria
+- `db.movies.find().sort({"rating.average": 1, runtime: 1}).pretty()` - sorting by multiple criteria
 
-`db.movies.find().sort({"rating.average": 1, runtime: 1}).skip(10).pretty()` - results with skipped 10 documents
+- `db.movies.find().sort({"rating.average": 1, runtime: 1}).skip(10).pretty()` - results with skipped 10 documents
 
 limits - `db.movies.find().sort({"rating.average": 1, runtime: 1}).skip(10).limit(10).pretty()`
 
@@ -458,27 +471,27 @@ Projections
 
 we can use projection to shape the structure of our results. if we want to include inly few elements of out document
 
-`db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1, _id: 0}).pretty()`
+- `db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1, _id: 0}).pretty()`
 
 if we want to exculde id field as it is not excluded by default we have to pass 0 for it
 
 projections also works on the embedded data
 
-`db.movies.find({}. {name:1, genres: 1, runtime: 1, "rating.average": 1, "schedule.time": 1, _id: 0}).pretty()`
+- `db.movies.find({}. {name:1, genres: 1, runtime: 1, "rating.average": 1, "schedule.time": 1, _id: 0}).pretty()`
 
 In Arrays
 
-`db.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty()` - give only one item from array genres drama
+- `db.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty()` - give only one item from array genres drama
 
-`db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}}).pretty()`
+- `db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}}).pretty()`
 
 $slice
 
-`db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice:2}, name: 1}).pretty()`
+- `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice:2}, name: 1}).pretty()`
 
 slice is related to arrays. only the first 2 elements returned for the array because we used slice 2
 
-`db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice: [1, 2]}, name: 1}).pretty()`
+- `db.movies.find({"rating.average": {$gt:9}}, {genres:{$slice: [1, 2]}, name: 1}).pretty()`
 
 skip the first item and give next 2 items
 
@@ -507,47 +520,47 @@ update query based on the unique id of the document
 
 override the exisiting fields if there is a match and there is any change in data, if data does not exist then add it.
 
-`db.users.updateMany({"hobbies.title": "Sports"}, {$set: {isSporty: true}})`
+- `db.users.updateMany({"hobbies.title": "Sports"}, {$set: {isSporty: true}})`
 
 Updating multiple fields with $set
 
-`db.users.updateOne({_id: ObjectId("6415be06a17bfffcea225952")}, {$set: {age:40, phone: 1234567890}})`
+- `db.users.updateOne({_id: ObjectId("6415be06a17bfffcea225952")}, {$set: {age:40, phone: 1234567890}})`
 
 Incrementing and decrementing values
 
-`db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}})`
+- `db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}})`
 
 Set along with update
 
-`db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}, $set: {isSporty: false}})`
+- `db.users.updateOne({name: "Manuel"}, {$inc: {age: 2}, $set: {isSporty: false}})`
 
 Use $min, $max, $mul
 
 $min only changes the value if the existing value is lower than the existing value
 
-`db.users.updateOne({name: "Chris"}, {$min: {age: 35}})`
+- `db.users.updateOne({name: "Chris"}, {$min: {age: 35}})`
 
 $max will only update the value if the updated value is higher than the existing value
 
 $mul will multiply the value matched with the one given in the query
 
-`db.users.updateOne({name: "Chris"}, {$mul: {age: 1.1}})`
+- `db.users.updateOne({name: "Chris"}, {$mul: {age: 1.1}})`
 
 drop a field from a document or documents
 
-`db.users.updateMany({isSporty:true}, {$set: {phone:null}})`
+- `db.users.updateMany({isSporty:true}, {$set: {phone:null}})`
 
 $unset allows us to unset or you can say drop a field from a collection document
 
-`db.users.updateMany({isSporty:true}, {$unset: {phone:""}})`
+- `db.users.updateMany({isSporty:true}, {$unset: {phone:""}})`
 
 $rename - renaming fields operator
 
-`db.users.updateMany({}, {$rename: {age: "totalAge"}})`
+- `db.users.updateMany({}, {$rename: {age: "totalAge"}})`
 
 upsert - command to insert if update does not match
 
-`db.users.updateOne({name: "Maria"}, {$set: {age: 39, hobbies: [{title: "Good Food", frequency: 5}], isSporty: true}}, {upsert: true})`
+- `db.users.updateOne({name: "Maria"}, {$set: {age: 39, hobbies: [{title: "Good Food", frequency: 5}], isSporty: true}}, {upsert: true})`
 
 Update Assignment
 -------------------
@@ -571,50 +584,54 @@ Update Arrays
 
 find and elemMatch in arrays
   
-`db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).pretty()`
+- `db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).pretty()`
   
-`db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).count()`
+- `db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).count()`
   
-`db.users.updateMany({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}, 
+- `db.users.updateMany({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}, 
  {$set: {"hobbies.$.highFrequency": true}})`
   
 $ sign placeholder is a lot helper when we want to update a specific element in an array
   
-`db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
+- `db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
   
 $[] means for each element inside the hobbies array as without [] ot updates only the first element
   
-`db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
+- `db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})`
   
 using array filters
 
-``db.users.updateMany({totalAge: {$gt: 30}}, {$set: {"hobbies.$[el].goodFrequency": true}},
-  {arrayFilters: [{"el.frequency": {$gt: 2}}]})``
+```
+db.users.updateMany({totalAge: {$gt: 30}}, {$set: {"hobbies.$[el].goodFrequency": true}},
+  {arrayFilters: [{"el.frequency": {$gt: 2}}]})
+```
   
 $push - adding elements to arrays
   
-`db.users.updateOne({name: "Maria"}, {$push: {hobbies: {title: "sports", frequency: 2}}})`
+- `db.users.updateOne({name: "Maria"}, {$push: {hobbies: {title: "sports", frequency: 2}}})`
   
-`db.users.updateOne({name: "Maria"}, {$push: {hobbies: 
+```
+db.users.updateOne({name: "Maria"}, {$push: {hobbies: 
   {$each: [{title: "Good Wine", frequency: 1}, {title: "Hockey", frequency: 2}], 
-  $sort: {frequency: -1}}}})`
+  $sort: {frequency: -1}}}})
+```
   
 $pull - used to remove data from array
   
-`db.users.updteOne({name: "Maria"}, {$pull: {hobbies: {title: "Hiking"}}})`
+- `db.users.updteOne({name: "Maria"}, {$pull: {hobbies: {title: "Hiking"}}})`
   
 $addToSet - used to add the data to the existing array set
   
-`db.users.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})`
+- `db.users.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})`
   
 Delete Documents
 -------------------
   
-`db.users.deleteOne({name: "Chris"})`
+- `db.users.deleteOne({name: "Chris"})`
   
-`db.users.deleteMany({age: {$gt: 30}, isSporty: true})`
+- `db.users.deleteMany({age: {$gt: 30}, isSporty: true})`
   
-`db.users.deleteMany({age: {$exists: false}, isSporty: true})`
+- `db.users.deleteMany({age: {$exists: false}, isSporty: true})`
 
 Indexes
 ---------
