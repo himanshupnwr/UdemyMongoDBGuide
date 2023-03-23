@@ -638,3 +638,68 @@ Indexes
 
 indexes are used to make the search within a collection faster. The conventional method to search is that when we find a document in a collection we search the complete collection. But if we create indexes then in the sorted index we can search for the information much more efficiently. But we also cannot create indexes based each item of the document because then we will have to update the indexes created on all insert and updates.
 
+use explain() to explain the query
+
+```
+db.persons.explain().find({"dob.age": {$gt:60}})
+```
+
+mongodb thinks in so-called plans and plans are simply alternatives it considers for executing that query and in the end it will find a winning plan and that winning plan is essentially what it did to get our results
+
+to explain the statistics for the query use the below command
+
+```
+db.persons.explain("executionStats").find({"dob.age": {$gt:60}})
+```
+
+Whilst we can't really see the index, you can think of the index as a simple list of values + pointers to the original document.
+
+Something like this (for the "age" field):
+
+`(29, "address in memory/ collection a1")`
+
+`(30, "address in memory/ collection a2")`
+
+`(33, "address in memory/ collection a3")`
+
+The documents in the collection would be at the "addresses" a1, a2 and a3. The order does not have to match the order in the index (and most likely, it indeed won't).
+
+The important thing is that the index items are ordered (ascending or descending - depending on how you created the index). `createIndex({age: 1})` creates an index with ascending sorting, `createIndex({age: -1})` creates one with descending sorting.
+
+MongoDB is now able to quickly find a fitting document when you filter for its age as it has a sorted list. Sorted lists are way quicker to search because you can skip entire ranges (and don't have to look at every single document).
+
+Additionally, sorting (via sort(...)) will also be sped up because you already have a sorted list. 
+
+Indexes are only beneficial if we are searching to get data that is only a small fraction of the entire collection. If the data returned is huge and is a big part of the collection then indexes slow you down becuase then there is this extra overhead of going to the index and then going to most of the documents anyways.
+
+creating an index
+
+`db.persons.createIndex({gender: 1})`
+
+dropping an index
+
+`db.persons.dropIndex({gender: 1})`
+
+compound index - makes and index bases on multiple keys and their order matters
+
+`db.persons.createIndex({"dob.age: 1, gender: 1"})`
+
+but if we have a compound index we cannot search based on only on of the indexed objects. Then indexes will only run on the find combination of both the indexes objects. This is the limitation of the indexes.
+
+but we can use sort to use this situation
+
+`db.persons.explain().find({"dob.age": 35}).sort({gender: 1})`
+
+now the query will use indexes although we have given just one of the indexed elements in the query because mongo db knows that it already has a sorted list of the documents based on the age and gender.
+
+Mongo DB has a memory restriction of 32MB for sorting. Mongodb fetch all our documents in memory and then do the sorting and for large collection this can be too much to sort. So we need indexes to sort in a manner so that it does not exceed the memory threshold of 32mb. So if we already have a sorted index then it helps with the sorting.
+
+to get the indexes we have created
+
+`db.persons.getIndexes()`
+
+default index is based on _id and another will be what we have created. The _id index which we get by default is an unique index by default.
+
+
+
+
