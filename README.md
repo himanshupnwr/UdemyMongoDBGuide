@@ -680,7 +680,7 @@ dropping an index
 
 `db.persons.dropIndex({gender: 1})`
 
-compound index - makes and index bases on multiple keys and their order matters
+compound index - makes and index bases on multiple keys and their order does not matters
 
 `db.persons.createIndex({"dob.age: 1, gender: 1"})`
 
@@ -700,6 +700,48 @@ to get the indexes we have created
 
 default index is based on _id and another will be what we have created. The _id index which we get by default is an unique index by default.
 
+Configuraing indexes for unique field
 
+- `db.Contacts.createIndex({email: 1}, {unique: true})`
 
+Partial Filters
+----------------
 
+partial filters are used to filter the indexes based on the filter expression
+
+- `db.Contacts.createsIndex({"dob.age" : 1}, {partialFilterExpression: {gender: "male"}})`
+
+This will create an index based on age but only for gender where value is male.
+
+but after this whenever we search based on the index we also have to give the filter expression condition also other it will do collection scan and not index scan
+
+The benefit is that our index is smaller if we have index based on filtered data.
+
+if we have created an index where empty value should be considered as unique so that when we enter empty value or same value the we do not get error from mongodb
+
+- `db.users.createIndex({email:1}, {unique: true, partialfilterExpression: {email: {$exists: true}}})`
+
+TTL (Time to Live) Indexes
+-----------------------------
+
+add current data with doucments in mongodb - createdAt: new Date()
+
+to remove every element after a certain amount of time
+
+```
+db.sessions.createIndex({createdAt: 1}, {expireAfterSeconds:10})
+```
+
+This will delete all the items that are a part of this index after 10 seconds
+
+Covered query means that what we are searchig using a query is covered by an index, that make our query faster to execute as compared to query that is not covered by indexes. So make sure that the queries that we are running most frequently is covered by an index.
+
+How mongoDB reject a plan or creates a winning plan
+-----------------------------------------------------
+
+Mongo DB caches the winning plan for the query which is the best plan for executing the data. But it also clears the cache after sometine when indexes are rebuilt or when we restart the server.
+
+Using explain and statistics about the queries we can always find out how our query is performing and optimize our queries.
+
+Multi-Key Indexes
+---------------------
