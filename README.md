@@ -761,3 +761,40 @@ but we cannot create an index with an array and an element inside of that array 
 Understanding Text Indexes
 ------------------------------
 
+`db.products.createIndex({description: "text"})`
+  
+This will create a text index where it will create an array of all the keyword that are in the description.
+  
+`db.products.find({$text: {search: "awesome"}}).pretty()`
+  
+`db.products.find({$text: {search: "\"red book\""}}).pretty()` //looking for keywords in text
+  
+mongo db assigns a score to a result for text based indexes
+  
+`db.products.find({$text: {search: "awesome Tshirt"}}, {score: {$meta: "textscore"}}).pretty()`
+  
+to sort based on this `$meta` score
+ 
+```
+db.products.find({$text: {search: "awesome Tshirt"}}, {score: {$meta: "textscore"}}).sort({score: {$meta: "textscore"}}).pretty()
+```
+
+we can have only one text index but we can merge the text of multiple fields to create one index
+  
+`db.products.createIndex({title: "text", description: "text"})`
+  
+The above query will create an index for both the text and description field in the same index
+  
+Using text indexes to exclude words
+-------------------------------------
+  
+if we excucively wants to exculde any word from index search we can use the - sign
+  
+`db.products.find({$text: {search: "awesome -Tshirt"}}).pretty()`
+  
+this will give all the results based on the results such that the index should not contain the tshirt word
+  
+when we create an index the database stops insertion as it might conflict with the indexes so to add the indexes in the background
+  
+`db.ratings.createIndex({age: 1}, {background: true})`
+  
