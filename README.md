@@ -745,3 +745,19 @@ Using explain and statistics about the queries we can always find out how our qu
 
 Multi-Key Indexes
 ---------------------
+
+If we create an index on an array then mongodb pulls out all the values in the array and stores them as separate element in an index. Multi key indexes are bigger than single field indexes. They are bigger so they takes more space so make them only if we query that array frequently. 
+
+creates index on hobby array - `db.contacts.createIndex({hobbies:1})`
+
+we can create index on an element inside an array and it will also be a multikey index.
+
+we can also create an index with array and single object together
+
+`db.contacts.createIndex({name: 1, hobbies: 1})`
+
+but we cannot create an index with an array and an element inside of that array together.
+
+Understanding Text Indexes
+------------------------------
+
