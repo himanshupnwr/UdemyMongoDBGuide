@@ -798,3 +798,64 @@ when we create an index the database stops insertion as it might conflict with t
   
 `db.ratings.createIndex({age: 1}, {background: true})`
   
+Working with Geospacial data
+-----------------------------
+
+to add geospatial data we have to add it as an embedded document and the add coordiantes in an array
+
+```
+db.places.insertOne({name: "California", location: {type: "Point", coordinates:[-122.4724356, 37.7672544]}})
+```
+
+to find a point that is close to our point we also needs a geospatial index to use the $near query
+
+creating a geospatial index - `db.places.createIndex({location: "2dsphere"})`
+
+to create an index on an area - `db.places.createIndex({area: "2dsphere"})`
+
+use $near query
+
+```
+db.places.find({location: {$near: {$geometry: {type: "Point", coordinates:[-122.471114, 37.771104]}}}})
+```
+
+to find a place with a polygon we can write query to find places within a given polygon using $geowithin and $geometry
+
+```
+db.places.find({location: {$geoWithin: {$geometry:{type: "Polygon", coordinates: [[cordinates1, cordinates2, cordinates3, cordinates4]]}}}}).pretty()
+```
+
+To find out if a user is inside a geospatial area - use $geoIntersect
+
+```
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates}}}})
+```
+
+Find places within certain radius
+
+```
+db.places.find({location: {$geowithin: {$centreSphere: [[-122.46203, 37.77286], 1/6378.1]}}}).pretty()
+```
+
+Assignment for Geospatial Queries
+
+Pick 3 points on googlemaps and store them in a collection
+
+``
+
+Pick a point and find the nearest place within a min and max distance
+
+``
+
+Pick an area and see which points (that are stored in your collection) it contains
+
+``
+
+Store at least one area in a different collection
+
+``
+
+Pick a point and find out which areas in your collection conatin that point
+
+``
+
