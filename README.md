@@ -775,7 +775,7 @@ mongo db assigns a score to a result for text based indexes
   
 to sort based on this `$meta` score
  
-```
+```javascript
 db.products.find({$text: {search: "awesome Tshirt"}}, {score: {$meta: "textscore"}}).sort({score: {$meta: "textscore"}}).pretty()
 ```
 
@@ -803,7 +803,7 @@ Working with Geospacial data
 
 to add geospatial data we have to add it as an embedded document and the add coordiantes in an array
 
-```
+```javascript
 db.places.insertOne({name: "California", location: {type: "Point", coordinates:[-122.4724356, 37.7672544]}})
 ```
 
@@ -815,25 +815,25 @@ to create an index on an area - `db.places.createIndex({area: "2dsphere"})`
 
 use $near query
 
-```
+```javascript
 db.places.find({location: {$near: {$geometry: {type: "Point", coordinates:[-122.471114, 37.771104]}}}})
 ```
 
 to find a place with a polygon we can write query to find places within a given polygon using $geowithin and $geometry
 
-```
+```javascript
 db.places.find({location: {$geoWithin: {$geometry:{type: "Polygon", coordinates: [[cordinates1, cordinates2, cordinates3, cordinates4]]}}}}).pretty()
 ```
 
 To find out if a user is inside a geospatial area - use $geoIntersect
 
-```
+```javascript
 db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates}}}})
 ```
 
 Find places within certain radius
 
-```
+```javascript
 db.places.find({location: {$geowithin: {$centreSphere: [[-122.46203, 37.77286], 1/6378.1]}}}).pretty()
 ```
 
@@ -858,4 +858,107 @@ Store at least one area in a different collection
 Pick a point and find out which areas in your collection conatin that point
 
 ``
+
+Aggregation Framework
+-----------------------
+
+Aggregation framework is about building a pipleine of steps that runs on the data that is retreived from your collection and then gives you the output in the form you need. 
+
+example of an aggregation query
+
+- match stage is taking a filter as we define it as an arguement to the find method.
+
+`db.persons.aggregate([{$match: {gender: "female"}}]).pretty()`
+
+- group stage
+
+group allows us to group data by a certain field or by multiple fields. 
+the _id in group defines which fields we want to group. The value of _id here is a document. The $symbol tell mongodb here that i am referring to a field of this document and then use . to point to a nested field. 
+
+Group accumulates data. Thsi means that we will have multiple documents with the same state and group will only output one. So multiple documents will be merged into one because we are aggregating. 
+
+query with match and group stage
+
+```javascript
+db.persons.aggregate([
+  {$match: {gender: 'female'}},
+  {$group: {_id: {state: "$location.state"}, totalPersons: {$sum: 1}}}
+]).pretty()
+```
+
+query with the sort stage
+
+```javascript
+db.persons.aggregate([
+  {$match: {gender: 'female'}},
+  {$group: {_id: {state: "$location.state"}, totalPersons: {$sum: 1}}},
+  {$sort: {totalPersons: -1}}
+]).pretty()
+```
+
+- Assignment
+
+match the people with age greater than 50, Group by gender and find out the average age and order the output by total persons
+
+```javascript
+db.persons.aggregate([
+    { $match: { 'dob.age': { $gt: 50 } } },
+    { $group: {
+        _id: { gender: '$gender' },
+        numPersons: { $sum: 1 },
+        avgAge: { $avg: '$dob.age' }
+      }},
+    { $sort: { numPersons: -1 } }
+  ]).pretty();
+```
+
+- $Project stage
+
+This stage allows us to transform each document instead of grouping multiple together. Project stage is a more powerful version of projections.
+
+```javascript
+db.persons.aggregate([
+  {$project: {_id:0, gender: 1, fullName: {$concat: ["$name.first", " ", "$name.last"]}}}
+])
+```
+
+To convert only the first letter to upper case for first and last name
+
+```javascript
+db.persons.aggregate([
+    { $project: {_id: 0, gender: 1, fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } }, //0 is start and 1 is total characters to change to upper
+            { $substrCP: [ '$name.first', 1, { $subtract: [{ $strLenCP: '$name.first' }, 1] }]},
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            { $substrCP: [ '$name.last', 1, { $subtract: [{ $strLenCP: '$name.last' }, 1] }]}
+          ]}}}
+  ]).pretty();
+```
+  
+Convert location data to geojson object
+  
+```javascript
+  db.persons.aggregate([
+  {$project: {_id:0, name: 1, email: 1, 
+    location: {type: 'Point', 
+    coordiantes: [ 
+      { $convert: { input: '$location.coordinates.longitude', to: "double", onError: 0.0, onNull: 0.0}}, 
+      { $convert: { input: '$location.coordinates.latitude', to: "double", onError: 0.0, onNull: 0.0}}
+    ]}}}
+])
+```
+
+Converting birtdate - `birthdate: { $convert: { input: '$dob.date', to: 'date' } },` or `birthdate: { $toDate: '$dob.date' },` by using $toDate shortcut
+
+There are other shortcuts available in mongoDB for conversion
+
+Group by birthyear after conversion and group and sort them, we can group on results of project
+
+```javascript
+{ $group: { _id: { birthYear: { $isoWeekYear: "$birthdate" } }, numPersons: { $sum: 1 } } },
+    { $sort: { numPersons: -1 } }
+```
+
 
