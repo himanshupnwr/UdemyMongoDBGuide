@@ -123,7 +123,7 @@ Delete documents
 
 Aggregation
 -------------
-```
+```javascript
 [
   {
     $group: {
@@ -206,7 +206,7 @@ we can throw and error and block the data update or log a warning and proceed wi
 
 We can add the validation when we create a collection
 
-```
+```javascript
 db.createCollection('posts', {
   validator: {
     $jsonSchema: {
@@ -250,7 +250,7 @@ db.createCollection('posts', {
 ```
 callMod - collectionModifier when collection is alreay created and we have to modify it
 
-```
+```javascript
 db.runCommand({
   collMod: 'posts',
   validator: {
@@ -601,7 +601,7 @@ $[] means for each element inside the hobbies array as without [] ot updates onl
   
 using array filters
 
-```
+```javascript
 db.users.updateMany({totalAge: {$gt: 30}}, {$set: {"hobbies.$[el].goodFrequency": true}},
   {arrayFilters: [{"el.frequency": {$gt: 2}}]})
 ```
@@ -610,7 +610,7 @@ $push - adding elements to arrays
   
 - `db.users.updateOne({name: "Maria"}, {$push: {hobbies: {title: "sports", frequency: 2}}})`
   
-```
+```javascript
 db.users.updateOne({name: "Maria"}, {$push: {hobbies: 
   {$each: [{title: "Good Wine", frequency: 1}, {title: "Hockey", frequency: 2}], 
   $sort: {frequency: -1}}}})
@@ -961,4 +961,13 @@ Group by birthyear after conversion and group and sort them, we can group on res
     { $sort: { numPersons: -1 } }
 ```
 
+Pushing elementa in newly created arrays
+-----------------------------------------
 
+$push allows us to push an array into every incoming document
+
+```javascript
+db.persons.aggregate([
+  {$group: {_id: {age: "$age"}, allHobbies: {$push: "hobbies"}}}
+]).pretty()
+```
