@@ -971,3 +971,51 @@ db.persons.aggregate([
   {$group: {_id: {age: "$age"}, allHobbies: {$push: "hobbies"}}}
 ]).pretty()
 ```
+
+To pull out the elements of an array use unwind. Unlike groups $unwind takes one document and pulls out multiple douments out of it
+
+```javascript
+db.friends.aggregate([
+  { $unwind: "$hobbies"},
+  { $group: {_id: {age: "$age"}, allHobbies: {$push: "$hobbies"}}}
+])
+```
+
+Now to remove duplicate values from the results of above query we can use $addToSet instead of $push
+
+```javascript
+db.friends.aggregate([
+  { $unwind: "$hobbies"},
+  { $group: {_id: {age: "$age"}, allHobbies: {$addToSet: "$hobbies"}}}
+])
+```
+
+Using Projections with Arrays - $slice
+--------------------------------
+
+```javascript
+db.friends.aggregate([
+  {$project: { _id: 0, examScore: { $slice: ["$examScores", 1]}}}
+])
+```
+
+Get the length of an array - $size
+-----------------------------
+
+```javascript
+db.friends.aggregate([
+  {$project: { _id: 0, numScore: { $size: "$examScores" }}}
+])
+```
+
+Filter our certain elements in an array - $filter
+----------------------------------------
+
+To return array with score value greater than 60
+
+```javascript
+db.friends.aggregate([
+  {$project: { _id: 0, examScores: { $filter: { input: "$examScores", as: "sc", cond: { $gt: ["$$sc.score, 60"] }}}}}
+])
+```
+
