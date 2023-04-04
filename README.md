@@ -841,23 +841,60 @@ Assignment for Geospatial Queries
 
 Pick 3 points on googlemaps and store them in a collection
 
-``
+```javascript
+db.places.insertOne({name: "Beergarden", location: {type: "Point", coordinates: [11.59228, 48.15203]}})
+```
+
+```javascript
+db.places.insertOne({name: "Octoberfest", location: {type: "Point", coordinates: [11.54965, 48.13203]}})
+```
+
+```javascript
+db.places.insertOne({name: "MyOldPlace", location: {type: "Point", coordinates: [11.56934, 48.15105]}})
+```
 
 Pick a point and find the nearest place within a min and max distance
 
-``
+```javascript
+const nearLocation = [11.59475, 48.14235]
+
+db.places.createsIndex({location: "2dsphere"})
+
+db.places.find({location: {$near: {geometry: {type: "Point", coordinates: nearLocation}, 
+  $minDistance: 1000, $maxDistance: 2000
+  }}}).pretty()
+```
 
 Pick an area and see which points (that are stored in your collection) it contains
 
-``
+```javascript
+
+const p1 = [11.6097, 48.14522]
+const p2 = [11.57142, 48.15416]
+const p3 = [11.6, 48.15954]
+
+const polygonArea = [[p1, p2, p3, p1]]
+
+const polygonObject = {type: "Polygon", coordinates: polygonArea}
+
+db.places.find({location: {$geoWithin: {$geometry: polygonObject}}}).pretty()
+```
 
 Store at least one area in a different collection
 
-``
+```javascript
+db.areas.insertOne({name: secondCollectionPlaces, area: polygonObject})
 
-Pick a point and find out which areas in your collection conatin that point
+db.areas.find({area: {$goeIntersects: {$geometry: {type: "Point", coordinates: [11.59228, 48.15203]}}}}).pretty()
 
-``
+db.areas.createIndex({area: "2dsphere"})
+```
+
+Pick a point and find out which areas in your collection contain that point
+
+```javascript
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [11.61779, 48.15122]}}}}).pretty()
+```
 
 Aggregation Framework
 -----------------------
