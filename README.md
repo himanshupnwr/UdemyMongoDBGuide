@@ -10,7 +10,9 @@ connect to remote host
 
 using authentication
 
-` mongosh "mongodb://mongodb0.example.com:28015" --username alice --authenticationDatabase admin`
+```javascript
+mongosh "mongodb://mongodb0.example.com:28015" --username alice --authenticationDatabase admin
+```
 
 type `exit()` to disconnect
 
@@ -318,7 +320,7 @@ To shut down Mongo DB Server from command prompt use
 
 We can modify the mongodb config file in bin folder
 
-```
+```javascript
 storage:
   dbPath: "/your/path/to/the/db/folder"
 systemLog:
@@ -1054,5 +1056,80 @@ To return array with score value greater than 60
 db.friends.aggregate([
   {$project: { _id: 0, examScores: { $filter: { input: "$examScores", as: "sc", cond: { $gt: ["$$sc.score, 60"] }}}}}
 ])
+```
+
+Applying multiple operations to our array
+
+```javascript
+db.friends.aggregate([
+    { $unwind: "$examScores" },
+    { $project: { _id: 1, name: 1, age: 1, score: "$examScores.score" } },
+    { $sort: { score: -1 } },
+    { $group: { _id: "$_id", name: { $first: "$name" }, maxScore: { $max: "$score" } } },
+    { $sort: { maxScore: -1 } }
+  ]).pretty();
+```
+
+Understanding $bucket
+
+The bucket stage allows you to output your data in, well in buckets for which you can calculate certain summary statistics. 
+Buckets takes a group by parameter here, a group by field where you define by which field do you want to put your data into buckets.
+
+```javascript
+db.persons.aggregate([
+    {
+      $bucket: {
+        groupBy: '$dob.age',
+        boundaries: [18, 30, 40, 50, 60, 120],
+        output: {
+          numPersons: { $sum: 1 },
+          averageAge: { $avg: '$dob.age' }
+        }
+      }
+    }
+  ]).pretty();
+```
+
+$bucketauto - here mongodb does the bucket algorithm for us we have to jsut define on what data we have to create the buckets
+
+```javascript
+db.persons.aggregate([
+    {
+      $bucketAuto: {
+        groupBy: '$dob.age',
+        buckets: 5,
+        output: {
+          numPersons: { $sum: 1 },
+          averageAge: { $avg: '$dob.age' }
+        }
+      }
+    }
+  ]).pretty();
+```
+
+Additional Aggregation stages query - returns 10 oldest men from collection
+
+```javascript
+db.persons.aggregate([
+    { $match: { gender: "male" } },
+    { $project: { _id: 0, gender: 1, name: { $concat: ["$name.first", " ", "$name.last"] }, birthdate: { $toDate: "$dob.date" } } },
+    { $sort: { birthdate: 1 } },
+    { $skip: 10 },
+    { $limit: 10 }
+  ]).pretty();
+```
+
+Writing aggregation pipeline data into a new collection using $out stage
+
+```javascript
+db.persons.aggregate([
+    {
+      $project: { //aggregation
+    },
+    {
+      $project: { // aggregation
+    },
+    { $out: "transformedPersons" }
+  ]).pretty();
 ```
 
