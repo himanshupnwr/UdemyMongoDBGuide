@@ -1133,3 +1133,39 @@ db.persons.aggregate([
   ]).pretty();
 ```
 
+$geonear stage to work with geospatial data. If we are using geonear it has to be the first element in the aggregation query
+
+```javascript
+db.transformedPersons.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [-18.4, -42.8]
+        },
+        maxDistance: 1000000,
+        num: 10,
+        query: { age: { $gt: 30 } },
+        distanceField: "distance"
+      }
+    }
+  ]).pretty();
+```
+
+Number in MongoDB
+-------------------
+
+Four main numeric data types in mongodb int32, int64 bit, doubles 64bit, highprecisiondoubles 128bit
+
+Javascript does not differentiate between integers and floating point numbers, every number is 64bit float instead. so 12 and 12.0 is the same number in javascript and also in the mongodb shell.
+
+to add a number as a int32 - `db.persons.insertOne({age: NumberInt("29")})`
+
+to add a number as a int64 - `db.persons.insertOne({age: NumberLong("9223372036854775807")})`
+
+to update the number also use the same type
+
+`db.persons.updateOne({}, {$inc: {valuation: NumberLong("10")}})`
+
+using decimal - `db.persons.insertOne({number1: NumberDecimal("0.3"), number2: NumberDecimal("0.1")})`
+
