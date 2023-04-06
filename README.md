@@ -1189,3 +1189,14 @@ to logout - `db.logout()`
 to get user Info - `db.getUser("appdev")`
 
 To encrypt the data while in transit mongodb uses tls/ssl but we need to configure that by creating a ssl certificate and attah it to localhost
+
+Capped Collections
+------------------------
+
+Capped collections are the collections where there is a restriction on the amount of data we can put in a collection or a document.
+
+`db.createCollection("capped", {capped: true, size: 1000, max: 3})`
+
+max is the number of documents we can have in the collection
+
+If i add one more document in the collection we will not get an error. The concept of a capped collection is that it will add the new document and remove the oldest document to make space for the new document. 
