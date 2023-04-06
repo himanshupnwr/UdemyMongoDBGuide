@@ -1169,3 +1169,23 @@ to update the number also use the same type
 
 using decimal - `db.persons.insertOne({number1: NumberDecimal("0.3"), number2: NumberDecimal("0.1")})`
 
+MonoDB Working with User Auth and Roles
+-----------------------------------------
+
+create a suer for a database
+
+`db.CreateUser({user: "max", pwd: "password", roles: ["userAdminAnyDatabase"]})`
+
+to login use `db.auth('username', 'password')`
+
+`db.createUser({user: 'appdev', pwd: 'password', roles: ["readWrite"]})`
+
+to login to mongo using the username and address
+
+`mongo -u username -p password --authenticationDatabase dbname`
+
+to logout - `db.logout()`
+
+to get user Info - `db.getUser("appdev")`
+
+To encrypt the data while in transit mongodb uses tls/ssl but we need to configure that by creating a ssl certificate and attah it to localhost
