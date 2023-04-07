@@ -1200,3 +1200,51 @@ Capped collections are the collections where there is a restriction on the amoun
 max is the number of documents we can have in the collection
 
 If i add one more document in the collection we will not get an error. The concept of a capped collection is that it will add the new document and remove the oldest document to make space for the new document. 
+
+Replica Sets
+-------------
+
+We can add nodes to the mongo db database in addition to the primary nodes. these extra nodes are called secondary nodes. These nodes together make the replica set. The primary node relicate the data to secondary nodes asyncronously. 
+
+we replicate data so that in case if our primary node is offline we can still send data for our queries until primary node is restored. This is called fault tolerance. This als gives better read performance as we have multiple databases where we can read from. We can configure our mongodb server to read from multiple databases both primary and secondary. 
+
+Sharding (Horizontal Scaling)
+------------------------------
+
+Splitting the data into multiple servers. Data is distributed across shards. Queries can run across shards. 
+
+We have mongos (Router) which is responsible for routing our queries. This will use the shard key to route our queries to shards. Each shard has its own unique shard key. 
+
+If there is not shard key then mongos will broadcast the request to each shard and shards have to find out if they are responsible for that data. Then each shard returns its response which is either the data or no data and mongos has to merge all the data together and return it. 
+
+Transactions
+--------------
+
+Using transaction we tell mongodb that either some operations succeed together or they fail together and we rollback if it fails.
+
+we can create a session to group all our requests in that session.
+
+```javascript
+
+const session = db.getMongo().startSession()
+
+const userCol = session.getDatabase("blog").users
+
+const postsCol = session.getDatabase("blog").posts
+
+session.startTransaction()
+
+userCol.deleteOne({_id: id})
+
+//This will not delete the data, it will be just saved as a todo
+
+userCol.deleteMaby({userId: id})
+
+//This will not delete the data, it will be just saved as a todo
+
+session.commitTransaction() // This will commit our changes to the database
+
+```
+
+If any of the query fail the complete transaction will be rolled back.
+
