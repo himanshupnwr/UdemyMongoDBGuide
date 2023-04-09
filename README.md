@@ -1189,6 +1189,21 @@ to logout - `db.logout()`
 to get user Info - `db.getUser("appdev")`
 
 To encrypt the data while in transit mongodb uses tls/ssl but we need to configure that by creating a ssl certificate and attah it to localhost
+  
+Assignment
+--------------
+
+create User - `db.createUser({user: 'test', pwd: 'test', roles: [userAdminAnyDatabase]})`
+  
+to login now use - `db.auth('test', 'test')`
+  
+create User with only limited access
+  
+`db.createUser({user: 'Dev', pwd: 'password', roles: [{role: "readWrite", db: "customers"}, {role: "readWrite", db:"sales"}]})`
+  
+login to mongo - mongo -u test -p test
+  
+
 
 Capped Collections
 ------------------------
@@ -1238,7 +1253,7 @@ userCol.deleteOne({_id: id})
 
 //This will not delete the data, it will be just saved as a todo
 
-userCol.deleteMaby({userId: id})
+userCol.deleteMany({userId: id})
 
 //This will not delete the data, it will be just saved as a todo
 
