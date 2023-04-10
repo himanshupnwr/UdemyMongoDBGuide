@@ -1,4 +1,10 @@
-# UdemyMongoDBGuide
+# Table of Contents
+1. [UdemyMongoDBGuide](#UdemyMongoDBGuide)
+2. [Commands](#Commands)
+3. [Basic Commands](#basic-commands)
+4. [create collection](#create-collection)
+
+## UdemyMongoDBGuide <a name="UdemyMongoDBGuide"></a>
 
 connection string to connect using mongo shell 
 
@@ -16,13 +22,13 @@ mongosh "mongodb://mongodb0.example.com:28015" --username alice --authentication
 
 type `exit()` to disconnect
 
-Commands
--------------------
-basic commands
+## Commands <a name="Commands"></a>
+
+### basic commands <a name="basic-commands"></a>
 
 `db.help()` `db.version()` `db.stats()` `show dbs` `use <dbname>` `show collections`
 
-create collection
+### create collection <a name="create-collection"></a>
 
 `create collection - db.createCollection("<dbname>")`
 
